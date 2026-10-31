@@ -1,3 +1,6 @@
 .venv/
 dist/
 __pycache__/
+.gibson-baseline.json
+.gibson-receipts/
+gibson/
