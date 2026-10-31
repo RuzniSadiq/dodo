@@ -1,0 +1,17 @@
+{
+  "repo": "OWNER/REPO",
+  "model": "release-branch",
+  "defaultBranch": "main",
+  "productionBranch": "release",
+  "requiredContexts": [
+    "quality",
+    "DCO",
+    "secrets",
+    "dependencies",
+    "build-e2e-required",
+    "review-evidence",
+    "test-integrity"
+  ],
+  "productionEnvironment": "Production",
+  "reviewerLogin": "CHANGEME-reviewer"
+}
