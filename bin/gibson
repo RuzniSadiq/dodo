@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# bin/gibson "plain-English feature" — plan, build, gate, review, merge via the /ship skill.
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+[ $# -gt 0 ] || { echo 'usage: bin/gibson "feature description"'; exit 2; }
+[ -f .gibson-halt ] && { echo "halted: rm .gibson-halt to resume"; exit 1; }
+exec claude --model opus "/ship $*"

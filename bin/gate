@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+"""Green gate: run .agents/gate.json steps; fail on anything worse than baseline.
+
+  bin/gate             run the gate (strict if no .gibson-baseline.json)
+  bin/gate --baseline  record the current state as the baseline (do this at branch point)
+"""
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+root = Path(__file__).resolve().parent.parent
+steps = {k: v for k, v in json.loads((root / ".agents/gate.json").read_text()).items()
+         if not k.startswith("$") and v}
+base_file = root / ".gibson-baseline.json"
+
+result: dict[str, object] = {}
+for name, cmd in steps.items():
+    p = subprocess.run(cmd, shell=True, cwd=root, capture_output=True, text=True)
+    out = p.stdout + p.stderr
+    result[name] = p.returncode == 0
+    if name == "test":
+        m = re.search(r"GIBSON_TEST_METRICS total=(\d+) skipped=(\d+)", out)
+        result["tests"], result["skipped"] = (int(m[1]), int(m[2])) if m else (0, 0)
+    status = "ok" if p.returncode == 0 else "FAIL"
+    print(f"{status:4} {name}: {cmd}")
+    if p.returncode:
+        print("\n".join(out.strip().splitlines()[-30:]))
+
+if "--baseline" in sys.argv:
+    base_file.write_text(json.dumps(result, indent=2))
+    print(f"baseline saved: {result}")
+    sys.exit(0)
+
+base = json.loads(base_file.read_text()) if base_file.exists() else {}
+bad = [n for n in steps if not result[n] and base.get(n, True)]
+if result.get("tests", 0) < base.get("tests", 0):
+    bad.append(f"test-integrity: total {base['tests']} -> {result['tests']}")
+if result.get("skipped", 0) > base.get("skipped", 0):
+    bad.append(f"test-integrity: skipped {base['skipped']} -> {result['skipped']}")
+
+print("GATE RED: " + "; ".join(bad) if bad else "GATE GREEN")
+sys.exit(1 if bad else 0)

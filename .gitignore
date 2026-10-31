@@ -4,3 +4,4 @@ __pycache__/
 .gibson-baseline.json
 .gibson-receipts/
 gibson/
+.gibson-halt

@@ -1,8 +1,6 @@
 {
-  "$comment": "Copy to <target-repo>/.agents/gate.json. Vendor-neutral: any harness may read it. Empty string = step does not apply. Extra top-level keys are ignored, so the gate may also live under a \"gate\" object alongside other agent config.",
-  "generate": "",
-  "typecheck": "npx tsc --noEmit",
-  "lint": "npm run lint",
-  "test": "npx vitest run",
-  "build": "npm run build"
+  "typecheck": "uv run mypy --strict src",
+  "lint": "uv run ruff check .",
+  "test": "uv run pytest -q",
+  "build": "uv run python -m compileall -q src"
 }
