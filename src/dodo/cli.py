@@ -1,16 +1,22 @@
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
 
-DB = Path.home() / ".dodo.json"
+
+def db_path() -> Path:
+    """Task file: $DODO_FILE if set, else ~/.dodo.json. Resolved per call."""
+    override = os.environ.get("DODO_FILE")
+    return Path(override) if override else Path.home() / ".dodo.json"
 
 def load() -> list[dict[str, Any]]:
-    return json.loads(DB.read_text()) if DB.exists() else []
+    db = db_path()
+    return json.loads(db.read_text()) if db.exists() else []
 
 def save(tasks: list[dict[str, Any]]) -> None:
-    DB.write_text(json.dumps(tasks, indent=2))
+    db_path().write_text(json.dumps(tasks, indent=2))
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="dodo")
