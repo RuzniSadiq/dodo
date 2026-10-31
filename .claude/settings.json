@@ -1,0 +1,9 @@
+{
+    "permissions": {
+      "allow": ["Edit", "Write", "Bash(git:*)", "Bash(gh issue:*)", "Bash(gh pr:*)",
+                "Bash(uv run:*)", "Bash(uv sync:*)", "Bash(bin/gate:*)", "Bash(./bin/gate:*)",
+                "Bash(ls:*)", "Bash(cat:*)", "Bash(test:*)"],
+      "deny": ["Bash(git push --force:*)", "Bash(git push -f:*)", "Bash(git reset --hard:*)",
+               "Bash(gh repo delete:*)", "Bash(gh api:*)", "Bash(uv add:*)", "Bash(uv remove:*)"]
+    }
+}

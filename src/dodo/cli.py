@@ -1,12 +1,15 @@
-import argparse, json, sys
+import argparse
+import json
+import sys
 from pathlib import Path
+from typing import Any
 
 DB = Path.home() / ".dodo.json"
 
-def load() -> list[dict]:
+def load() -> list[dict[str, Any]]:
     return json.loads(DB.read_text()) if DB.exists() else []
 
-def save(tasks: list[dict]) -> None:
+def save(tasks: list[dict[str, Any]]) -> None:
     DB.write_text(json.dumps(tasks, indent=2))
 
 def main(argv: list[str] | None = None) -> int:
